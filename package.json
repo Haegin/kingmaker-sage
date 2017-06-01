@@ -6,6 +6,9 @@
   "scripts": {
     "start": "ts-node index.ts"
   },
+  "engines": {
+    "node": "7.0.0"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
