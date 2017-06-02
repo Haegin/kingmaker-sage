@@ -4,6 +4,7 @@ require('dotenv').config()
 
 import { Message } from 'discord.js'
 import { CommandoClient, Command, CommandMessage } from 'discord.js-commando'
+import * as Dice from './dice'
 
 let bot = new CommandoClient({
     owner: process.env.OWNER,
@@ -13,6 +14,7 @@ let bot = new CommandoClient({
 bot.login(process.env.TOKEN);
 
 bot.registry
+    .registerGroup('play', 'Play Commands')
     .registerGroup('channels', 'Channel Commands')
     .registerDefaults();
 
@@ -92,7 +94,7 @@ inviteCommand.run = async (message: CommandMessage, args: string): Promise<any> 
 
         await targetMember.addRole(role.id);
 
-        return message.reply(`Invited @${targetMember.displayName} to #${role.name}`) as any;
+        return message.reply(`invited @${targetMember.displayName} to #${role.name}`) as any;
     } catch (error) {
         console.log(error);
 
@@ -101,6 +103,88 @@ inviteCommand.run = async (message: CommandMessage, args: string): Promise<any> 
 }
 
 bot.registry.registerCommand(inviteCommand);
+
+let rollCommand = new Command(bot, {
+    name: 'roll',
+    group: 'play',
+    memberName: 'roll',
+    description: 'Rolls all the dice!'
+});
+
+rollCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
+    try {
+        var dice = new Dice(args);
+        dice.execute();
+        var result = dice.result();
+        var rolls = dice.rolls.map((die) => die.result);
+
+        let fields: { title: string, value: string }[] = []
+        let response = '';
+
+        if (dice.onlyStarWars()) {
+            var starWars = dice.starWarsResult();
+            response = '@' + message.member.nickname + ' rolled **' + starWars.description + '**';
+
+            // If the comment exists, add it to the end of the response
+            if (dice.comment.length > 0) {
+                response = response.concat(' for ' + dice.comment.trim());
+            }
+
+            fields.push({
+                title: 'Rolls',
+                value: starWars.faces
+            });
+        } else if (dice.onlyGm()) {
+            var gm = dice.gmResult();
+            response = '@' + message.member.displayName + ' rolled **' + gm.description + '**';
+
+            // If the comment exists, add it to the end of the response
+            if (dice.comment.length > 0) {
+                response = response.concat(' for ' + dice.comment.trim());
+            }
+        } else {
+            response = '@' + message.member.displayName + ' rolled **' + result + '**';
+
+            // If the comment exists, add it to the end of the response
+            if (dice.comment.length > 0) {
+                response = response.concat(' for ' + dice.comment.trim());
+            }
+
+            fields.push({
+                title: 'Dice',
+                value: dice.command
+            });
+
+            fields.push({
+                title: 'Rolls',
+                value: rolls.join(' ')
+            });
+
+            if (dice.kept.length > 0) {
+                fields.push({
+                    title: 'Kept: ' + dice.kept.length,
+                    value: dice.kept.join(' ')
+                });
+            }
+        }
+
+        response += '\n\n'
+
+        fields.forEach(field => {
+            response += '**' + field.title + '**\n' + field.value + '\n\n'
+        })
+
+        response = response.trim();
+
+        return message.channel.send(response);
+    } catch (error) {
+        console.log(error);
+
+        return message.reply(`failed command`) as any;
+    }
+}
+
+bot.registry.registerCommand(rollCommand);
 
 bot.on('message', msg => {
     if (msg.content === 'ping') {
