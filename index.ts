@@ -114,7 +114,8 @@ let rollCommand = new Command(bot, {
     name: 'roll',
     group: 'play',
     memberName: 'roll',
-    description: 'Rolls all the dice!'
+    description: 'Rolls all the dice!',
+    aliases: ['r']
 });
 
 rollCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
@@ -129,7 +130,7 @@ rollCommand.run = async (message: CommandMessage, args: string): Promise<any> =>
 
         if (dice.onlyStarWars()) {
             var starWars = dice.starWarsResult();
-            response = '@' + message.member.nickname + ' rolled **' + starWars.description + '**';
+            response = '@' + message.member.displayName + ' rolled **' + starWars.description + '**';
 
             // If the comment exists, add it to the end of the response
             if (dice.comment.length > 0) {
