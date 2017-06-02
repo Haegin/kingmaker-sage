@@ -34,6 +34,8 @@ joinCommand.run = async (message: CommandMessage, arg: string): Promise<any> => 
         let channel = message.guild.channels
             .find(channel => channel.name == arg && channel.type == 'text') as TextChannel;
 
+        message.delete().catch(() => { });
+
         return channel.send(`*@${message.member.displayName} has joined*`) as any;
     } catch (error) {
         console.log(error);
@@ -60,6 +62,8 @@ leaveCommand.run = async (message: CommandMessage, arg: string): Promise<any> =>
             .find(role => role.name == channel.name);
 
         await message.member.removeRole(role.id);
+
+        message.delete().catch(() => { });
 
         return message.channel.send(`*@${message.member.displayName} has left*`) as any;
     } catch (error) {
@@ -93,6 +97,8 @@ inviteCommand.run = async (message: CommandMessage, args: string): Promise<any> 
             .find(channel => channel.name == channelName && channel.type == 'text') as TextChannel;
 
         await targetMember.addRole(role.id);
+
+        message.delete().catch(() => { });
 
         return channel.send(`*@${targetMember.displayName} has joined*`) as any;
     } catch (error) {
