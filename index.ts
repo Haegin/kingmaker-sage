@@ -2,7 +2,7 @@
 
 require('dotenv').config()
 
-import { Message } from 'discord.js'
+import { Message, TextChannel } from 'discord.js'
 import { CommandoClient, Command, CommandMessage } from 'discord.js-commando'
 import * as Dice from './dice'
 
@@ -22,18 +22,19 @@ let joinCommand = new Command(bot, {
     name: 'join',
     group: 'channels',
     memberName: 'join',
-    description: 'Join a channel'
+    description: 'Join a channel.'
 });
 
 joinCommand.run = async (message: CommandMessage, arg: string): Promise<any> => {
     try {
-        let role = bot.guilds
-            .find(guild => guild.id == message.member.guild.id).roles
-            .find(role => role.name == arg.trim());
+        let role = message.guild.roles.find('name', arg);
 
-        await message.member.addRole(role.id);
+        await message.member.addRole(role);
 
-        return message.reply(`joined you to #${role.name}`) as any;
+        let channel = message.guild.channels
+            .find(channel => channel.name == arg && channel.type == 'text') as TextChannel;
+
+        return channel.send(`*@${message.member.displayName} has joined*`) as any;
     } catch (error) {
         console.log(error);
 
@@ -47,22 +48,20 @@ let leaveCommand = new Command(bot, {
     name: 'leave',
     group: 'channels',
     memberName: 'leave',
-    description: 'Leave a channel'
+    description: 'Leave a channel.'
 });
 
 leaveCommand.run = async (message: CommandMessage, arg: string): Promise<any> => {
     try {
-        let channel = bot.guilds
-            .find(guild => guild.id == message.member.guild.id).channels
+        let channel = message.guild.channels
             .find(channel => channel.id == message.channel.id);
 
-        let role = bot.guilds
-            .find(guild => guild.id == message.member.guild.id).roles
+        let role = message.guild.roles
             .find(role => role.name == channel.name);
 
         await message.member.removeRole(role.id);
 
-        return message.reply(`has left`) as any;
+        return message.channel.send(`*@${message.member.displayName} has left*`) as any;
     } catch (error) {
         console.log(error);
 
@@ -81,20 +80,21 @@ let inviteCommand = new Command(bot, {
 
 inviteCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
     try {
-        let [id, channel] = args.split(" ").map(part => part.trim()).filter(part => part.length > 0)
+        let [id, channelName] = args.split(" ").map(part => part.trim()).filter(part => part.length > 0)
         id = id.replace(/\D/g, '');
 
-        let targetMember = bot.guilds
-            .find(guild => guild.id == message.member.guild.id).members
+        let targetMember = message.guild.members
             .find(member => member.id == id);
 
-        let role = bot.guilds
-            .find(guild => guild.id == message.member.guild.id).roles
-            .find(role => role.name == channel);
+        let role = message.guild.roles
+            .find(role => role.name == channelName);
+
+        let channel = message.guild.channels
+            .find(channel => channel.name == channelName && channel.type == 'text') as TextChannel;
 
         await targetMember.addRole(role.id);
 
-        return message.reply(`invited @${targetMember.displayName} to #${role.name}`) as any;
+        return channel.send(`*@${targetMember.displayName} has joined*`) as any;
     } catch (error) {
         console.log(error);
 
@@ -194,4 +194,20 @@ bot.on('message', msg => {
 
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.username}!`);
+});
+
+bot.on('guildMemberAdd', async (member) => {
+    try {
+        let generalChannel = member.guild.defaultChannel;
+        await generalChannel.send(`*@${member.displayName} has joined*`) as any;
+    } catch (error) {
+
+    }
+
+    try {
+        let introductionsChannel = member.guild.channels.find(channel => channel.name == 'introductions' && channel.type == 'text') as TextChannel;
+        await introductionsChannel.send(`*@${member.displayName} has joined*`) as any;
+    } catch (error) {
+
+    }
 });
