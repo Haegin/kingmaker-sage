@@ -193,7 +193,8 @@ bot.on('message', msg => {
 });
 
 bot.on('ready', () => {
-    console.log(`Logged in as ${bot.user.username}!`);
+    console.log('Running');
+    bot.guilds.forEach(guild => guild.member(bot.user).setNickname('Robot').catch(() => { }));
 });
 
 bot.on('guildMemberAdd', async (member) => {
