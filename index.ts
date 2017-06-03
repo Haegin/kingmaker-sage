@@ -182,7 +182,8 @@ createCommand.run = async (message: CommandMessage, args: string): Promise<any> 
             allow: 3072
         }]);
 
-        message.member.addRole(role.id);
+        let guildMember = detectGuild(message).members.find("id", message.author.id)
+        await guildMember.addRole(role);
 
         return message.reply(`#${args} has been created`) as any;
     } catch (error) {
