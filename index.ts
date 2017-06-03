@@ -199,7 +199,29 @@ channelsCommand.run = async (message: CommandMessage, args: string): Promise<any
         message.delete().catch(() => { });
 
         let response = "**Available Channels:**\n";
-        response += roles.join('\n');
+
+        let halfIndex = Math.ceil(roles.length / 2);
+        let firstColumn = roles.slice(0, halfIndex);
+        let secondColumn = roles.slice(halfIndex);
+
+        let firstColumnWidth = 0;
+        firstColumn.forEach(role => {
+            if (role.length > firstColumnWidth) {
+                firstColumnWidth = role.length;
+            }
+        })
+        firstColumnWidth += 3;
+
+        response += '```\n';
+        _.range(firstColumn.length).forEach(i => {
+            response += firstColumn[i];
+            response += _.range(firstColumnWidth - firstColumn[i].length).map(i => ' ').join('');
+            response += secondColumn[i] ? secondColumn[i] : ''
+            response += '\n'
+        })
+        response += '```\n';
+
+        response += 'Type "/join *channel_name*" in the server chat to join a channel.'
 
         return message.member.sendMessage(response) as any;
     } catch (error) {
