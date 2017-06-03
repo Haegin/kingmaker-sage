@@ -41,24 +41,27 @@ let cleanupChannelName = (channelName: string, guild: Guild): string => {
     }
 }
 
-let join = async (channelName: string, member: GuildMember, guild: Guild) => {
-    let role = guild.roles.find('name', channelName);
+let join = async (channelNames: string[], member: GuildMember, guild: Guild) => {
+    let roles = channelNames
+        .map(name => guild.roles.find('name', name))
+        .filter(role => role)
+        .filter(role => !_.includes(blacklisted, role.name.toLowerCase()))
 
-    if (!role) {
-        throw Error('Missing channel: ' + channelName);
+    if (roles.length == 0) {
+        throw Error('Missing channels');
     }
 
-    if (_.includes(blacklisted, role.name.toLowerCase())) {
-        throw Error('Blacklisted channel: ' + role.name);
+    await member.addRoles(roles);
+
+    for (let i = 0; i < roles.length; i++) {
+        let channel = guild.channels.find(channel =>
+            channel.name == roles[i].name &&
+            channel.type == 'text') as TextChannel;
+
+        if (channel) {
+            channel.send(`*@${member.displayName} has joined*`).catch(error => console.log(error));
+        }
     }
-
-    await member.addRole(role);
-
-    let channel = guild.channels.find(channel =>
-        channel.name == channelName &&
-        channel.type == 'text') as TextChannel;
-
-    await channel.send(`*@${member.displayName} has joined*`);
 }
 
 let parseAndJoin = async (channelNamesString: string, member: GuildMember, guild: Guild) => {
@@ -88,11 +91,7 @@ let parseAndJoin = async (channelNamesString: string, member: GuildMember, guild
         }
     }
 
-    mappedNames = _.uniq(mappedNames);
-
-    for (let i = 0; i < mappedNames.length; i++) {
-        await join(mappedNames[i], member, guild);
-    }
+    await join(_.uniq(mappedNames), member, guild);
 }
 
 let allChannels = (guild: Guild): string[] => {
