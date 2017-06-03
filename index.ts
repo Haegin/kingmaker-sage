@@ -138,6 +138,44 @@ inviteCommand.run = async (message: CommandMessage, args: string): Promise<any> 
 
 bot.registry.registerCommand(inviteCommand);
 
+let createCommand = new Command(bot, {
+    name: 'create',
+    group: 'channels',
+    memberName: 'create',
+    description: 'Creates a new channel.'
+});
+
+createCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
+    try {
+        let name = args.trim();
+
+        let role = await message.guild.createRole({ name });
+        let channel = await message.guild.createChannel(name, "text", [{
+            id: (await message.guild.roles.find("name", "@everyone")).id,
+            type: "role",
+            deny: 3072
+        }, {
+            id: role.id,
+            type: "role",
+            allow: 3072
+        }]);
+
+        message.member.addRole(role.id);
+
+        return message.reply(`#${args} has been created`) as any;
+    } catch (error) {
+        console.log(error);
+
+        return message.reply(`failed command`) as any;
+    }
+}
+
+createCommand.hasPermission = (message: CommandMessage): boolean => {
+    return message.member.roles.filter(role => role.name.toLocaleLowerCase() == "moderator").size > 0
+}
+
+bot.registry.registerCommand(createCommand);
+
 let channelsCommand = new Command(bot, {
     name: 'channels',
     group: 'channels',
