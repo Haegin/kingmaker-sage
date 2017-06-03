@@ -77,7 +77,7 @@ let parseAndJoin = async (channelNamesString: string, member: GuildMember, guild
     let mappedNames = []
     for (let i = 0; i < channelNames.length; i++) {
         if (channelNames[i] == "all") {
-            mappedNames.concat(allChannels(guild));
+            mappedNames = mappedNames.concat(allChannels(guild));
         } else {
             let groupsChannels = await GroupDatabase.find({ name: channelNames[i] })
             if (groupsChannels.length > 0) {
