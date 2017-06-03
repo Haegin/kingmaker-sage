@@ -124,6 +124,41 @@ inviteCommand.run = async (message: CommandMessage, args: string): Promise<any> 
 
 bot.registry.registerCommand(inviteCommand);
 
+let channelsCommand = new Command(bot, {
+    name: 'channels',
+    group: 'channels',
+    memberName: 'channels',
+    description: 'List all channels.'
+});
+
+channelsCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
+    try {
+        let channels = message.guild.channels
+            .filter(channel => channel.type == 'text')
+            .filter(channel => !_.includes(blacklistedChannels, channel.name))
+            .map(channel => channel.name);
+
+        let roles = message.guild.roles
+            .filter(role => !_.includes(blacklistedChannels, role.name))
+            .map(role => role.name)
+            .filter(role => _.includes(channels, role))
+            .sort();
+
+        message.delete().catch(() => { });
+
+        let response = "**Available Channels:**\n";
+        response += roles.join('\n');
+
+        return message.member.sendMessage(response) as any;
+    } catch (error) {
+        console.log(error);
+
+        return message.reply(`failed command`) as any;
+    }
+}
+
+bot.registry.registerCommand(channelsCommand);
+
 let rollCommand = new Command(bot, {
     name: 'roll',
     group: 'play',
