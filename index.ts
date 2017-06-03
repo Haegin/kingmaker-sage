@@ -34,6 +34,12 @@ let joinCommand = new Command(bot, {
 
 joinCommand.run = async (message: CommandMessage, arg: string): Promise<any> => {
     try {
+        if (arg.includes('<#')) {
+            arg = arg.substr(2)
+            arg = arg.substr(0, arg.length - 1)
+            arg = message.guild.channels.find('id', arg).name;
+        }
+
         let role = message.guild.roles.find('name', arg);
         if (_.includes(blacklistedChannels, role.name.toLowerCase())) {
             throw Error('Blacklisted channel: ' + role.name);
@@ -96,6 +102,14 @@ inviteCommand.run = async (message: CommandMessage, args: string): Promise<any> 
     try {
         let [id, channelName] = args.split(" ").map(part => part.trim()).filter(part => part.length > 0)
         id = id.replace(/\D/g, '');
+
+        if (!channelName || channelName.length == 0) {
+            channelName = (message.channel as TextChannel).name
+        } else if (channelName.includes('<#')) {
+            channelName = channelName.substr(2)
+            channelName = channelName.substr(0, channelName.length - 1)
+            channelName = message.guild.channels.find('id', channelName).name;
+        }
 
         let targetMember = message.guild.members
             .find(member => member.id == id);
