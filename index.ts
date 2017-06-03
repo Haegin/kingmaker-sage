@@ -4,6 +4,7 @@ require('dotenv').config()
 
 import { Message, TextChannel } from 'discord.js'
 import { CommandoClient, Command, CommandMessage } from 'discord.js-commando'
+import * as _ from 'lodash'
 import * as Dice from './dice'
 
 let bot = new CommandoClient({
@@ -12,6 +13,12 @@ let bot = new CommandoClient({
 });
 
 bot.login(process.env.TOKEN);
+
+let blacklistedChannels = (process.env.BLACKLIST || '')
+    .split(',')
+    .map(channel => channel.trim())
+    .map(channel => channel.toLowerCase())
+    .filter(channel => channel.length > 0);
 
 bot.registry
     .registerGroup('play', 'Play Commands')
@@ -28,6 +35,9 @@ let joinCommand = new Command(bot, {
 joinCommand.run = async (message: CommandMessage, arg: string): Promise<any> => {
     try {
         let role = message.guild.roles.find('name', arg);
+        if (_.includes(blacklistedChannels, role.name.toLowerCase())) {
+            throw Error('Blacklisted channel: ' + role.name);
+        }
 
         await message.member.addRole(role);
 
@@ -92,6 +102,10 @@ inviteCommand.run = async (message: CommandMessage, args: string): Promise<any> 
 
         let role = message.guild.roles
             .find(role => role.name == channelName);
+
+        if (_.includes(blacklistedChannels, role.name)) {
+            throw Error('Blacklisted channel: ' + role.name);
+        }
 
         let channel = message.guild.channels
             .find(channel => channel.name == channelName && channel.type == 'text') as TextChannel;
