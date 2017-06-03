@@ -68,6 +68,9 @@ joinCommand.run = async (message: CommandMessage, channelName: string): Promise<
             .find(channel => channel.name == channelName && channel.type == 'text') as TextChannel;
 
         message.delete().catch(() => { });
+        if (message.channel.type == "dm") {
+            message.reply(`added you to #${channelName}`)
+        }
 
         return channel.send(`*@${guildMember.displayName} has joined*`) as any;
     } catch (error) {
@@ -142,6 +145,10 @@ inviteCommand.run = async (message: CommandMessage, args: string): Promise<any> 
         await targetMember.addRole(role.id);
 
         message.delete().catch(() => { });
+
+        if (message.channel.type == "dm") {
+            message.reply(`added @${targetMember.displayName} to #${channelName}`)
+        }
 
         return channel.send(`*@${targetMember.displayName} has joined*`) as any;
     } catch (error) {
