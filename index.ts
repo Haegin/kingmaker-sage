@@ -46,10 +46,7 @@ let join = async (channelNames: string[], member: GuildMember, guild: Guild) => 
         .map(name => guild.roles.find('name', name))
         .filter(role => role)
         .filter(role => !_.includes(blacklisted, role.name.toLowerCase()))
-
-    if (roles.length == 0) {
-        throw Error('Missing channels');
-    }
+        .filter(role => !member.roles.exists("name", role.name));
 
     await member.addRoles(roles);
 
