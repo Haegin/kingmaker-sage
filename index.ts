@@ -174,15 +174,16 @@ leaveCommand.run = async (message: CommandMessage, args: string): Promise<any> =
 
         channels = mapToChannels(parseChannelString(args, guild), guild)
             .filter(channel => message.member.roles.exists("name", channel.name))
-            
+
         roles = mapToRoles(parseChannelString(args, guild), guild)
             .filter(role => message.member.roles.exists("name", role.name))
 
+        let member = guild.members.find("id", message.author.id);
         await message.member.removeRoles(roles);
         channels.forEach(channel =>
-            channel.send(`*@${message.member.displayName} has left*`).catch(err => console.log(err)))
+            channel.send(`*@${member.displayName} has left*`).catch(err => console.log(err)))
 
-        message.delete().catch(() => { });
+        message.delete().catch(err => console.log(err));
 
         return undefined;
     } catch (error) {
@@ -239,11 +240,20 @@ let createCommand = new Command(bot, {
 
 createCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
     try {
-        let name = args.trim();
+        let name = args.trim().toLowerCase();
+        let guild = detectGuild(message);
 
-        let role = await detectGuild(message).createRole({ name });
-        let channel = await detectGuild(message).createChannel(name, "text", [{
-            id: (await detectGuild(message).roles.find("name", "@everyone")).id,
+        if (!/^[a-z0-9_]+$/.test(name)) {
+            throw Error('Bad new channel name: ' + name);
+        }
+
+        if (await guild.roles.find("name", name)) {
+            throw Error('Channel already exists: ' + name);
+        }
+
+        let role = await guild.createRole({ name });
+        let channel = await guild.createChannel(name, "text", [{
+            id: (await guild.roles.find("name", "@everyone")).id,
             type: "role",
             deny: 3072
         }, {
@@ -252,7 +262,7 @@ createCommand.run = async (message: CommandMessage, args: string): Promise<any> 
             allow: 3072
         }]);
 
-        let guildMember = detectGuild(message).members.find("id", message.author.id)
+        let guildMember = guild.members.find("id", message.author.id)
         await guildMember.addRole(role);
 
         return message.reply(`#${args} has been created`) as any;
