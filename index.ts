@@ -431,6 +431,10 @@ bot.on('message', msg => {
 bot.on('ready', () => {
     console.log('Running');
     bot.guilds.forEach(guild => guild.member(bot.user).setNickname('Robot').catch(() => { }));
+    bot.user.setPresence({
+        status: "online",
+        game: { name: "/help and /channels" }
+    })
 });
 
 bot.on('guildMemberAdd', async (member) => {
