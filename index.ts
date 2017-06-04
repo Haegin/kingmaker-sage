@@ -2,7 +2,7 @@
 
 require('dotenv').config()
 
-import { Message, TextChannel, Guild, GuildMember } from 'discord.js'
+import { Message, TextChannel, Guild, GuildMember, Role } from 'discord.js'
 import { CommandoClient, Command, CommandMessage } from 'discord.js-commando'
 import * as _ from 'lodash'
 import * as Dice from './dice'
@@ -41,11 +41,29 @@ let cleanupChannelName = (channelName: string, guild: Guild): string => {
     }
 }
 
-let join = async (channelNames: string[], member: GuildMember, guild: Guild) => {
-    let roles = channelNames
+let mapToRoles = (channelNames: string[], guild: Guild): Role[] => {
+    return channelNames
         .map(name => guild.roles.find('name', name))
         .filter(role => role)
-        .filter(role => !_.includes(blacklisted, role.name.toLowerCase()))
+        .filter(role => !_.includes(blacklisted, role.name.toLowerCase()));
+}
+
+let mapToChannels = (channelNames: string[], guild: Guild): TextChannel[] => {
+    return channelNames
+        .map(name => guild.channels.find('name', name))
+        .filter(channel => channel)
+        .filter(channel => !_.includes(blacklisted, channel.name.toLowerCase())) as TextChannel[];
+}
+
+let parseChannelString = (channelNames: string, guild: Guild): string[] => {
+    return channelNames.split(' ')
+        .map(name => name.trim())
+        .filter(name => name.length > 0)
+        .map(name => cleanupChannelName(name, guild))
+}
+
+let join = async (channelNames: string[], member: GuildMember, guild: Guild) => {
+    let roles = mapToRoles(channelNames, guild)
         .filter(role => !member.roles.exists("name", role.name));
 
     await member.addRoles(roles);
@@ -62,10 +80,7 @@ let join = async (channelNames: string[], member: GuildMember, guild: Guild) => 
 }
 
 let parseAndJoin = async (channelNamesString: string, member: GuildMember, guild: Guild) => {
-    let channelNames = channelNamesString.split(' ')
-        .map(name => name.trim())
-        .filter(name => name.length > 0)
-        .map(name => cleanupChannelName(name, guild))
+    let channelNames = parseChannelString(channelNamesString, guild)
 
     for (let i = 0; i < channelNames.length; i++) {
         let aliases = await AliasDatabase.find({ alias: channelNames[i] })
@@ -147,25 +162,29 @@ let leaveCommand = new Command(bot, {
     description: 'Leave a channel.'
 });
 
-leaveCommand.run = async (message: CommandMessage, arg: string): Promise<any> => {
+leaveCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
     try {
         let guild = detectGuild(message)
+        let channels: TextChannel[] = [];
+        let roles: Role[] = [];
 
-        let channel = guild.channels
-            .find(channel => channel.id == message.channel.id);
-
-        let role = guild.roles
-            .find(role => role.name == channel.name);
-
-        if (_.includes(blacklisted, role.name.toLowerCase())) {
-            throw Error('Blacklisted channel: ' + role.name);
+        if (!args || args.length == 0) {
+            args = (message.channel as TextChannel).name
         }
 
-        await message.member.removeRole(role.id);
+        channels = mapToChannels(parseChannelString(args, guild), guild)
+            .filter(channel => message.member.roles.exists("name", channel.name))
+            
+        roles = mapToRoles(parseChannelString(args, guild), guild)
+            .filter(role => message.member.roles.exists("name", role.name))
+
+        await message.member.removeRoles(roles);
+        channels.forEach(channel =>
+            channel.send(`*@${message.member.displayName} has left*`).catch(err => console.log(err)))
 
         message.delete().catch(() => { });
 
-        return message.channel.send(`*@${message.member.displayName} has left*`) as any;
+        return undefined;
     } catch (error) {
         console.log(error);
 
