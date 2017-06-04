@@ -79,9 +79,7 @@ let join = async (channelNames: string[], member: GuildMember, guild: Guild) => 
     }
 }
 
-let parseAndJoin = async (channelNamesString: string, member: GuildMember, guild: Guild) => {
-    let channelNames = parseChannelString(channelNamesString, guild)
-
+let resolveNames = async (channelNames: string[], guild: Guild): Promise<string[]> => {
     for (let i = 0; i < channelNames.length; i++) {
         let aliases = await AliasDatabase.find({ alias: channelNames[i] })
         if (aliases.length > 0) {
@@ -103,7 +101,13 @@ let parseAndJoin = async (channelNamesString: string, member: GuildMember, guild
         }
     }
 
-    await join(_.uniq(mappedNames), member, guild);
+    return _.uniq(mappedNames);
+}
+
+let parseAndJoin = async (channelNamesString: string, member: GuildMember, guild: Guild) => {
+    let channelNames = parseChannelString(channelNamesString, guild);
+
+    await join(await resolveNames(channelNames, guild), member, guild);
 }
 
 let allChannels = (guild: Guild): string[] => {
@@ -172,14 +176,18 @@ leaveCommand.run = async (message: CommandMessage, args: string): Promise<any> =
             args = (message.channel as TextChannel).name
         }
 
-        channels = mapToChannels(parseChannelString(args, guild), guild)
+        let resolvedNames = (await resolveNames(parseChannelString(args, guild), guild))
+            .filter(name => !_.includes(blacklisted, name.toLowerCase()))
+
+        channels = mapToChannels(resolvedNames, guild)
             .filter(channel => message.member.roles.exists("name", channel.name))
 
-        roles = mapToRoles(parseChannelString(args, guild), guild)
+        roles = mapToRoles(resolvedNames, guild)
             .filter(role => message.member.roles.exists("name", role.name))
 
-        let member = guild.members.find("id", message.author.id);
         await message.member.removeRoles(roles);
+
+        let member = guild.members.find("id", message.author.id);
         channels.forEach(channel =>
             channel.send(`*@${member.displayName} has left*`).catch(err => console.log(err)))
 
