@@ -281,6 +281,27 @@ createCommand.run = async (message: CommandMessage, args: string): Promise<any> 
     }
 }
 
+let topicCommand = new Command(bot, {
+    name: 'topic',
+    group: 'channels',
+    memberName: 'topic',
+    description: 'Set channel topic.'
+});
+
+topicCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
+    try {
+        detectGuild(message).channels.find('id', message.channel.id).setTopic(args);
+
+        return message.reply(`set new channel topic`) as any;
+    } catch (error) {
+        console.log(error);
+
+        return message.reply(`failed command`) as any;
+    }
+}
+
+bot.registry.registerCommand(topicCommand);
+
 createCommand.hasPermission = (message: CommandMessage): boolean => {
     let guildMember = detectGuild(message).members.find("id", message.author.id)
     return guildMember.roles.filter(role => role.name.toLocaleLowerCase() == process.env.MOD_ROLE.toLowerCase()).size > 0
