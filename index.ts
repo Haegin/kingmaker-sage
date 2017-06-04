@@ -288,7 +288,9 @@ channelsCommand.run = async (message: CommandMessage, args: string): Promise<any
 
         response += 'Type "/join *channel_name*" to join a channel.'
 
-        return message.author.sendMessage(response) as any;
+        message.author.sendMessage(response).catch(err => console.log(err))
+
+        return message.reply('Sent you a DM with channel list.')
     } catch (error) {
         console.log(error);
 
