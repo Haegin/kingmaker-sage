@@ -187,10 +187,6 @@ leaveCommand.run = async (message: CommandMessage, args: string): Promise<any> =
 
         await message.member.removeRoles(roles);
 
-        let member = guild.members.find("id", message.author.id);
-        channels.forEach(channel =>
-            channel.send(`*@${member.displayName} has left*`).catch(err => console.log(err)))
-
         message.delete().catch(err => console.log(err));
 
         return undefined;
