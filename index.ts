@@ -460,16 +460,7 @@ bot.on('ready', () => {
 
 bot.on('guildMemberAdd', async (member) => {
     try {
-        let generalChannel = member.guild.defaultChannel;
-        await generalChannel.send(`*@${member.displayName} has joined*`) as any;
-    } catch (error) {
-
-    }
-
-    try {
         let introductionsChannel = member.guild.channels.find(channel => channel.name == 'introductions' && channel.type == 'text') as TextChannel;
         await introductionsChannel.send(`*@${member.displayName} has joined*`) as any;
-    } catch (error) {
-
-    }
+    } catch (error) { }
 });
