@@ -314,8 +314,6 @@ let channelsCommand = new Command(bot, {
 
 channelsCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
     try {
-        message.delete().catch(() => { });
-
         let response = "**Available Channels:**\n";
 
         let allRolls = allChannels(detectGuild(message));
@@ -344,7 +342,9 @@ channelsCommand.run = async (message: CommandMessage, args: string): Promise<any
 
         message.author.sendMessage(response).catch(err => console.log(err))
 
-        return message.reply('Sent you a DM with channel list.')
+        message.delete().catch(() => { });
+
+        return undefined;
     } catch (error) {
         console.log(error);
 
