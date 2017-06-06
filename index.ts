@@ -465,6 +465,33 @@ rCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
 
 bot.registry.registerCommand(rCommand);
 
+let rollQuietCommand = new Command(bot, {
+    name: 'rollquiet',
+    group: 'play',
+    memberName: 'rollquiet',
+    description: 'Rolls all the dice quietly!',
+    aliases: ['rq']
+});
+
+rollQuietCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
+    try {
+        let member = detectGuild(message).members.find("id", message.author.id)
+        let result = roll(args, member);
+
+        let response = result.message + ', ' + result.fields
+            .map(field => '**' + field.title + '** ' + field.value)
+            .join(', ')
+
+        return member.send(response.trim());
+    } catch (error) {
+        console.log(error);
+
+        return message.reply(`failed command`) as any;
+    }
+}
+
+bot.registry.registerCommand(rollQuietCommand);
+
 bot.on('ready', () => {
     console.log('Running');
     bot.guilds.forEach(guild => guild.member(bot.user).setNickname('Robot').catch(() => { }));
