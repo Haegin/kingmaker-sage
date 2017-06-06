@@ -456,14 +456,16 @@ bot.on('ready', () => {
 
 bot.on('guildMemberAdd', async (member) => {
     try {
+        let defaultRoles = (process.env.DEFAULT || [])
+            .split(',').filter(role => role).map(role => role.trim()).filter(role => role.length > 0)
+            .map(name => member.guild.roles.find('name', name))
+            .filter(role => role)
+
+        member.addRoles(defaultRoles).catch(err => console.log(err));
+    } catch (error) { }
+
+    try {
         let introductionsChannel = member.guild.channels.find(channel => channel.name == 'introductions' && channel.type == 'text') as TextChannel;
         await introductionsChannel.send(`*@${member.displayName} has joined*`) as any;
     } catch (error) { }
-
-    let defaultRoles = (process.env.DEFAULT || [])
-        .split(',').filter(role => role).map(role => role.trim()).filter(role => role.length > 0)
-        .map(name => member.guild.roles.find('name', name))
-        .filter(role => role)
-
-    member.addRoles(defaultRoles).catch(err => console.log(err));
 });
