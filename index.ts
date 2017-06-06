@@ -474,6 +474,8 @@ let rollQuietCommand = new Command(bot, {
 });
 
 rollQuietCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
+    message.delete().catch(err => console.log(err))
+
     try {
         let member = detectGuild(message).members.find("id", message.author.id)
         let result = roll(args, member);
