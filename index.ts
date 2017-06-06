@@ -354,82 +354,82 @@ channelsCommand.run = async (message: CommandMessage, args: string): Promise<any
 
 bot.registry.registerCommand(channelsCommand);
 
+let roll = (args: string, member: GuildMember): { message: string, fields: { title: string, value: string }[] } => {
+    var dice = new Dice(args);
+    dice.execute();
+    var result = dice.result();
+    var rolls = dice.rolls.map((die) => die.result);
+
+    let fields: { title: string, value: string }[] = []
+    let message = '';
+
+    if (dice.onlyStarWars()) {
+        var starWars = dice.starWarsResult();
+        message = '@' + member.displayName + ' rolled **' + starWars.description + '**';
+
+        // If the comment exists, add it to the end of the response
+        if (dice.comment.length > 0) {
+            message = message.concat(' for ' + dice.comment.trim());
+        }
+
+        fields.push({
+            title: 'Rolls',
+            value: starWars.faces
+        });
+    } else if (dice.onlyGm()) {
+        var gm = dice.gmResult();
+        message = '@' + member.displayName + ' rolled **' + gm.description + '**';
+
+        // If the comment exists, add it to the end of the response
+        if (dice.comment.length > 0) {
+            message = message.concat(' for ' + dice.comment.trim());
+        }
+    } else {
+        message = '@' + member.displayName + ' rolled **' + result + '**';
+
+        // If the comment exists, add it to the end of the response
+        if (dice.comment.length > 0) {
+            message = message.concat(' for ' + dice.comment.trim());
+        }
+
+        fields.push({
+            title: 'Dice',
+            value: dice.command
+        });
+
+        fields.push({
+            title: 'Rolls',
+            value: rolls.join(' ')
+        });
+
+        if (dice.kept.length > 0) {
+            fields.push({
+                title: 'Kept: ' + dice.kept.length,
+                value: dice.kept.join(' ')
+            });
+        }
+    }
+
+    return { message, fields }
+}
+
 let rollCommand = new Command(bot, {
     name: 'roll',
     group: 'play',
     memberName: 'roll',
-    description: 'Rolls all the dice!',
-    aliases: ['r']
+    description: 'Rolls all the dice!'
 });
 
 rollCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
     try {
-        var dice = new Dice(args);
-        dice.execute();
-        var result = dice.result();
-        var rolls = dice.rolls.map((die) => die.result);
+        let member = detectGuild(message).members.find("id", message.author.id)
+        let result = roll(args, member);
 
-        let fields: { title: string, value: string }[] = []
-        let response = '';
+        let response = result.message + '\n\n' + result.fields
+            .map(field => '**' + field.title + '**\n' + field.value)
+            .join('\n\n')
 
-        let guildMember = detectGuild(message).members.find("id", message.author.id)
-
-        if (dice.onlyStarWars()) {
-            var starWars = dice.starWarsResult();
-            response = '@' + guildMember.displayName + ' rolled **' + starWars.description + '**';
-
-            // If the comment exists, add it to the end of the response
-            if (dice.comment.length > 0) {
-                response = response.concat(' for ' + dice.comment.trim());
-            }
-
-            fields.push({
-                title: 'Rolls',
-                value: starWars.faces
-            });
-        } else if (dice.onlyGm()) {
-            var gm = dice.gmResult();
-            response = '@' + guildMember.displayName + ' rolled **' + gm.description + '**';
-
-            // If the comment exists, add it to the end of the response
-            if (dice.comment.length > 0) {
-                response = response.concat(' for ' + dice.comment.trim());
-            }
-        } else {
-            response = '@' + guildMember.displayName + ' rolled **' + result + '**';
-
-            // If the comment exists, add it to the end of the response
-            if (dice.comment.length > 0) {
-                response = response.concat(' for ' + dice.comment.trim());
-            }
-
-            fields.push({
-                title: 'Dice',
-                value: dice.command
-            });
-
-            fields.push({
-                title: 'Rolls',
-                value: rolls.join(' ')
-            });
-
-            if (dice.kept.length > 0) {
-                fields.push({
-                    title: 'Kept: ' + dice.kept.length,
-                    value: dice.kept.join(' ')
-                });
-            }
-        }
-
-        response += '\n\n'
-
-        fields.forEach(field => {
-            response += '**' + field.title + '**\n' + field.value + '\n\n'
-        })
-
-        response = response.trim();
-
-        return message.channel.send(response);
+        return message.channel.send(response.trim());
     } catch (error) {
         console.log(error);
 
@@ -439,11 +439,31 @@ rollCommand.run = async (message: CommandMessage, args: string): Promise<any> =>
 
 bot.registry.registerCommand(rollCommand);
 
-bot.on('message', msg => {
-    if (msg.content === 'ping') {
-        msg.reply('Pong!');
-    }
+let rCommand = new Command(bot, {
+    name: 'r',
+    group: 'play',
+    memberName: 'r',
+    description: 'Rolls all the dice compactly!',
 });
+
+rCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
+    try {
+        let member = detectGuild(message).members.find("id", message.author.id)
+        let result = roll(args, member);
+
+        let response = result.message + ', ' + result.fields
+            .map(field => '**' + field.title + '** ' + field.value)
+            .join(', ')
+
+        return message.channel.send(response.trim());
+    } catch (error) {
+        console.log(error);
+
+        return message.reply(`failed command`) as any;
+    }
+}
+
+bot.registry.registerCommand(rCommand);
 
 bot.on('ready', () => {
     console.log('Running');
