@@ -221,6 +221,12 @@ inviteCommand.run = async (message: CommandMessage, argsString: string): Promise
         let invitedMember = guild.members
             .find(member => member.id == id);
 
+        if (!invitedMember) {
+            let plainName = args[0].replace('@', '');
+            invitedMember = guild.members
+                .find(member => member.displayName.toLowerCase() == plainName.toLowerCase());
+        }
+
         await parseAndJoin(channelNames.join(' '), invitedMember, guild);
 
         message.delete().catch(() => { });
