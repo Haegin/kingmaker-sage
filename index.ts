@@ -478,7 +478,7 @@ rollQuietCommand.run = async (message: CommandMessage, args: string): Promise<an
         let member = detectGuild(message).members.find("id", message.author.id)
         let result = roll(args, member);
 
-        let response = result.message.replace('*', '') + ', ' + result.fields
+        let response = result.message.replace(/\*/g, '') + ', ' + result.fields
             .map(field => field.title + ': ' + field.value)
             .join(', ')
 
