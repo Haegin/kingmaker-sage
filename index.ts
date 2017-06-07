@@ -67,6 +67,10 @@ let join = async (channelNames: string[], member: GuildMember, guild: Guild) => 
     let roles = mapToRoles(channelNames, guild)
         .filter(role => !member.roles.exists("name", role.name));
 
+    if (roles.length == 0) {
+        throw Error('No valid channels to join');
+    }
+
     await member.addRoles(roles);
 
     for (let i = 0; i < roles.length; i++) {
