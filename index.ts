@@ -10,7 +10,8 @@ import { connect, GroupDatabase, AliasDatabase } from './db'
 
 let bot = new CommandoClient({
     owner: process.env.OWNER,
-    commandPrefix: '/'
+    commandPrefix: '/',
+    unknownCommandResponse: false
 });
 
 (async () => {
@@ -193,7 +194,7 @@ leaveCommand.run = async (message: CommandMessage, args: string): Promise<any> =
     } catch (error) {
         console.log(error);
 
-        return message.reply(`failed command`) as any;
+        return message.member.send(`Command failed: ${message.cleanContent}`) as any;
     }
 }
 
@@ -235,7 +236,7 @@ inviteCommand.run = async (message: CommandMessage, argsString: string): Promise
     } catch (error) {
         console.log(error);
 
-        return message.reply(`failed command`) as any;
+        return message.member.send(`Command failed: ${message.cleanContent}`) as any;
     }
 }
 
@@ -279,7 +280,7 @@ createCommand.run = async (message: CommandMessage, args: string): Promise<any> 
     } catch (error) {
         console.log(error);
 
-        return message.reply(`failed command`) as any;
+        return message.member.send(`Command failed: ${message.cleanContent}`) as any;
     }
 }
 
@@ -293,12 +294,13 @@ let topicCommand = new Command(bot, {
 topicCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
     try {
         detectGuild(message).channels.find('id', message.channel.id).setTopic(args);
+        message.delete().catch(err => console.log(err))
 
         return message.reply(`set new channel topic`) as any;
     } catch (error) {
         console.log(error);
 
-        return message.reply(`failed command`) as any;
+        return message.member.send(`Command failed: ${message.cleanContent}`) as any;
     }
 }
 
@@ -354,7 +356,7 @@ channelsCommand.run = async (message: CommandMessage, args: string): Promise<any
     } catch (error) {
         console.log(error);
 
-        return message.reply(`failed command`) as any;
+        return message.member.send(`Command failed: ${message.cleanContent}`) as any;
     }
 }
 
@@ -439,7 +441,7 @@ rollCommand.run = async (message: CommandMessage, args: string): Promise<any> =>
     } catch (error) {
         console.log(error);
 
-        return message.reply(`failed command`) as any;
+        return message.member.send(`Command failed: ${message.cleanContent}`) as any;
     }
 }
 
@@ -465,7 +467,7 @@ rCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
     } catch (error) {
         console.log(error);
 
-        return message.reply(`failed command`) as any;
+        return message.member.send(`Command failed: ${message.cleanContent}`) as any;
     }
 }
 
@@ -494,7 +496,7 @@ rollQuietCommand.run = async (message: CommandMessage, args: string): Promise<an
     } catch (error) {
         console.log(error);
 
-        return message.reply(`failed command`) as any;
+        return message.member.send(`Command failed: ${message.cleanContent}`) as any;
     }
 }
 
