@@ -516,13 +516,22 @@ bot.on('ready', () => {
 });
 
 bot.on('guildMemberAdd', async (member) => {
+    let defaultRoleNames = (process.env.DEFAULT || [])
+
     try {
-        let defaultRoles = (process.env.DEFAULT || [])
+        let defaultRoles = defaultRoleNames
             .split(',').filter(role => role).map(role => role.trim()).filter(role => role.length > 0)
             .map(name => member.guild.roles.find('name', name))
             .filter(role => role)
 
         member.addRoles(defaultRoles).catch(err => console.log(err));
+    } catch (error) { }
+
+    try {
+        member.sendMessage(`Thanks for joining ${member.guild.name}! ` +
+            `There are many more channels here beyond the ${defaultRoleNames.length} default ones.\n\n` +
+            `Explore more channels with the "/channels" command.`)
+            .catch(err => console.log(err))
     } catch (error) { }
 
     try {
