@@ -8,6 +8,8 @@ import * as _ from 'lodash'
 import * as Dice from './dice'
 import { connect, GroupDatabase, AliasDatabase } from './db'
 
+const joinMessageRegex = /has joined\*$/
+
 let bot = new CommandoClient({
     owner: process.env.OWNER,
     commandPrefix: '/',
@@ -79,7 +81,14 @@ let join = async (channelNames: string[], member: GuildMember, guild: Guild) => 
             channel.type == 'text') as TextChannel;
 
         if (channel) {
-            channel.send(`*@${member.displayName} has joined*`).catch(error => console.log(error));
+            let lastMessage = await channel.fetchMessage(channel.lastMessageID);
+            let isBotMessage = lastMessage.author === bot.user
+            let isJoinedMessage = joinMessageRegex.test(lastMessage.content)
+            if (isBotMessage && isJoinedMessage) {
+                lastMessage.edit(`${lastMessage.content.slice(0, -2)}, along with ${member.displayName}*`)
+            } else {
+                channel.send(`*@${member.displayName} has joined*`).catch(error => console.log(error));
+            }
         }
     }
 }
