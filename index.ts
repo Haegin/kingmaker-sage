@@ -531,10 +531,10 @@ bot.on('guildMemberAdd', async (member) => {
     } catch (error) { }
 
     try {
-        member.sendMessage(`Thanks for joining ${member.guild.name}.\n\n` +
+        member.sendMessage(`Thanks for joining *${member.guild.name}*.\n\n` +
             `There are many more channels beyond the ${defaultRoleNames.length + 1} default ones. ` +
-            `There are ${allChannels(member.guild).length} in total!\n\n` +
-            `Discover them all by entering the "/channels" command here.`)
+            `There are *${allChannels(member.guild).length}* in total!\n\n` +
+            `Discover them all by entering the "*/channels*" command here.`)
             .catch(err => console.log(err))
     } catch (error) { }
 
