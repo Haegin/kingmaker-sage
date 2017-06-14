@@ -77,7 +77,7 @@ export class ChannelManager {
       lastMessage = await channel.fetchMessage(channel.lastMessageID)
     } catch (error) { }
 
-    if (this.messageFromUser(bot.user, lastMessage) && this.isJoinedMessage(lastMessage)) {
+    if (lastMessage && this.messageFromUser(bot.user, lastMessage) && this.isJoinedMessage(lastMessage)) {
 
       const users = this.parseJoinedUsers(lastMessage);
       let message;
