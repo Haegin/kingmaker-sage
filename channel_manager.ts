@@ -48,18 +48,18 @@ export class ChannelManager {
     }
 
     let mappedNames = []
-    channelNames.forEach(async (channelName) => {
-      if (channelName === "all") {
+    for (let i = 0; i < channelNames.length; i++) {
+      if (channelNames[i] == "all") {
         mappedNames = mappedNames.concat(allChannels(guild));
       } else {
-        const groupsChannels = await GroupDatabase.find({ name: channelName })
+        let groupsChannels = await GroupDatabase.find({ name: channelNames[i] })
         if (groupsChannels.length > 0) {
           mappedNames = mappedNames.concat(groupsChannels[0].channels);
         } else {
-          mappedNames.push(channelName);
+          mappedNames.push(channelNames[i]);
         }
       }
-    })
+    }
 
     return _.uniq(mappedNames);
   }
@@ -70,7 +70,7 @@ export class ChannelManager {
     await this.join(await this.resolveNames(channelNames, guild), member, guild);
   }
 
-   async postJoinMessage(bot: CommandoClient, channel: TextChannel, member: GuildMember) {
+  async postJoinMessage(bot: CommandoClient, channel: TextChannel, member: GuildMember) {
     let lastMessage = await channel.fetchMessage(channel.lastMessageID);
     if (this.messageFromUser(bot.user, lastMessage) && this.isJoinedMessage(lastMessage)) {
       const users = this.parseJoinedUsers(lastMessage);
