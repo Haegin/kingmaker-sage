@@ -100,25 +100,28 @@ export class ChannelManager {
 
   createJoinCommand() {
     return async (message: CommandMessage, channelName: string): Promise<any> => {
+      message.delete().catch(() => { });
+
       try {
         const guild = detectGuild(this.bot, message);
         const member = guild.members.find("id", message.author.id)
         await this.parseAndJoin(channelName, member, guild);
 
-        message.delete().catch(() => { });
         if (message.channel.type == "dm") {
           return message.reply(`added you to #${channelName}`)
         } else {
           return undefined;
         }
       } catch (error) {
-        return message.reply(`Join command failed: ${error}.`) as any;
+        return message.member.send(`"${message.cleanContent}" failed: ${error}.`) as any;
       }
     }
   }
 
   createLeaveCommand() {
     return async (message: CommandMessage, args: string): Promise<any> => {
+      message.delete().catch(console.log);
+
       try {
         const guild = detectGuild(this.bot, message)
         let channels: TextChannel[] = [];
@@ -139,8 +142,6 @@ export class ChannelManager {
 
         await message.member.removeRoles(roles);
 
-        message.delete().catch(console.log);
-
         console.log("Leaving successful")
         return undefined;
       } catch (error) {
@@ -153,6 +154,8 @@ export class ChannelManager {
 
   createInviteCommand() {
     return async (message: CommandMessage, args: string): Promise<any> => {
+      message.delete().catch(console.log);
+
       try {
         let guild = detectGuild(this.bot, message)
         let channels: TextChannel[] = [];
@@ -172,8 +175,6 @@ export class ChannelManager {
           .filter(role => message.member.roles.exists("name", role.name))
 
         await message.member.removeRoles(roles);
-
-        message.delete().catch(console.log);
 
         return undefined;
       } catch (error) {
