@@ -71,8 +71,14 @@ export class ChannelManager {
   }
 
   async postJoinMessage(bot: CommandoClient, channel: TextChannel, member: GuildMember) {
-    let lastMessage = await channel.fetchMessage(channel.lastMessageID);
+    let lastMessage;
+
+    try {
+      lastMessage = await channel.fetchMessage(channel.lastMessageID)
+    } catch (error) { }
+
     if (this.messageFromUser(bot.user, lastMessage) && this.isJoinedMessage(lastMessage)) {
+
       const users = this.parseJoinedUsers(lastMessage);
       let message;
       if (users.length > 1) {
