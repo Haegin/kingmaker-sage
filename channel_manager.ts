@@ -140,13 +140,15 @@ export class ChannelManager {
         const resolvedNames = (await this.resolveNames(this.parseChannelString(args, guild), guild))
           .filter(name => !_.includes(blacklisted, name.toLowerCase()))
 
+        const member = guild.members.find("id", message.author.id)
+
         channels = mapToChannels(resolvedNames, guild)
-          .filter(channel => message.member.roles.exists("name", channel.name))
+          .filter(channel => member.roles.exists("name", channel.name))
 
         roles = mapToRoles(resolvedNames, guild)
-          .filter(role => message.member.roles.exists("name", role.name))
+          .filter(role => member.roles.exists("name", role.name))
 
-        await message.member.removeRoles(roles);
+        await member.removeRoles(roles);
 
         console.log("Leaving successful")
         return undefined;
