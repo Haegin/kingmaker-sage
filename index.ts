@@ -32,7 +32,8 @@ let joinCommand = new Command(bot, {
     name: 'join',
     group: 'channels',
     memberName: 'join',
-    description: 'Join a channel.'
+    description: 'Join a channel.',
+    aliases: ['j']
 });
 
 joinCommand.run = channelManager.createJoinCommand();
@@ -136,7 +137,8 @@ let channelsCommand = new Command(bot, {
     name: 'channels',
     group: 'channels',
     memberName: 'channels',
-    description: 'List all channels.'
+    description: 'List all channels.',
+    aliases: ['channel']
 });
 
 channelsCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
