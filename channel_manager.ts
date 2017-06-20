@@ -161,28 +161,30 @@ export class ChannelManager {
   }
 
   createInviteCommand() {
-    return async (message: CommandMessage, args: string): Promise<any> => {
+    return async (message: CommandMessage, argsString: string): Promise<any> => {
       message.delete().catch(console.log);
 
       try {
-        let guild = detectGuild(this.bot, message)
-        let channels: TextChannel[] = [];
-        let roles: Role[] = [];
+        let args = argsString.split(" ").map(part => part.trim()).filter(part => part.length > 0);
+        let id = args[0].replace(/\D/g, '');
+        let channelNames = args.slice(1);
 
-        if (!args || args.length == 0) {
-          args = (message.channel as TextChannel).name
+        let guild = detectGuild(this.bot, message);
+
+        if (!channelNames || channelNames.length == 0) {
+          channelNames.push((message.channel as TextChannel).name)
         }
 
-        const resolvedNames = (await this.resolveNames(this.parseChannelString(args, guild), guild))
-          .filter(name => !_.includes(blacklisted, name.toLowerCase()))
+        let invitedMember = guild.members
+          .find(member => member.id == id);
 
-        channels = mapToChannels(resolvedNames, guild)
-          .filter(channel => message.member.roles.exists("name", channel.name))
+        if (!invitedMember) {
+          let plainName = args[0].replace('@', '');
+          invitedMember = guild.members
+            .find(member => member.displayName.toLowerCase() == plainName.toLowerCase());
+        }
 
-        roles = mapToRoles(resolvedNames, guild)
-          .filter(role => message.member.roles.exists("name", role.name))
-
-        await message.member.removeRoles(roles);
+        await this.parseAndJoin(channelNames.join(' '), invitedMember, guild);
 
         return undefined;
       } catch (error) {
