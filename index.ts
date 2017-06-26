@@ -44,7 +44,8 @@ let leaveCommand = new Command(bot, {
     name: 'leave',
     group: 'channels',
     memberName: 'leave',
-    description: 'Leave a channel.'
+    description: 'Leave a channel.',
+    aliases: ['part']
 });
 
 leaveCommand.run = channelManager.createLeaveCommand();
