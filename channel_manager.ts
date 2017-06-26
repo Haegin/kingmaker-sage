@@ -119,7 +119,7 @@ export class ChannelManager {
           return undefined;
         }
       } catch (error) {
-        return message.member.send(`"${message.cleanContent}" failed: ${error}.`) as any;
+        return message.reply(`"${message.cleanContent}" failed: ${error}.`) as any;
       }
     }
   }
@@ -155,7 +155,7 @@ export class ChannelManager {
       } catch (error) {
         console.log(error);
 
-        return message.member.send(`Leave command failed: ${message.cleanContent}`) as any;
+        return message.reply(`Leave command failed: ${message.cleanContent}`) as any;
       }
     }
   }
@@ -190,7 +190,7 @@ export class ChannelManager {
       } catch (error) {
         console.log(error);
 
-        return message.member.send(`Invite command failed: ${message.cleanContent}`) as any;
+        return message.reply(`Invite command failed: ${message.cleanContent}`) as any;
       }
     }
   }
