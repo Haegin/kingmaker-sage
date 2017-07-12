@@ -9,6 +9,8 @@ import * as Dice from './dice'
 import { connect, GroupDatabase, AliasDatabase } from './db'
 import { blacklisted, allChannels, detectGuild, mapToRoles } from './utils'
 import { DiceCommands } from './diceCommands'
+import { KingmakerData } from './kingmakerData'
+import { formatBuilding } from './kingmakerUtils'
 
 let bot = new CommandoClient({
   owner: process.env.OWNER,
@@ -24,10 +26,40 @@ let bot = new CommandoClient({
 bot.registry
   .registerGroup('play', 'Play Commands')
   .registerGroup('channels', 'Channel Commands')
+  .registerGroup('kingmaker', 'Kingmaker Specific Commands')
   .registerDefaults();
 
 const diceCommands = new DiceCommands(bot)
 diceCommands.setup()
+
+const kingmakerData = new KingmakerData()
+
+let buildingsCommand = new Command(bot, {
+  name: 'buildings',
+  group: 'kingmaker',
+  memberName: 'buildings',
+  description: 'Find buildings'
+});
+buildingsCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
+  kingmakerData.findBuildings(args)
+    .then(buildings => buildings.map(building => building.name))
+    .then(found => message.channel.send(`Found ${found.length} buildings: ${found.join(', ')}`))
+    .catch(console.log)
+}
+bot.registry.registerCommand(buildingsCommand)
+
+let buildingInfoCommand = new Command(bot, {
+  name: 'info',
+  group: 'kingmaker',
+  memberName: 'info',
+  description: 'Get info about a building'
+});
+buildingInfoCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
+  kingmakerData.buildingInfo(args)
+    .then(building => message.channel.send(formatBuilding(building)))
+    .catch(console.log)
+}
+bot.registry.registerCommand(buildingInfoCommand)
 
 let topicCommand = new Command(bot, {
   name: 'topic',
