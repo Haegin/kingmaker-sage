@@ -1,20 +1,22 @@
-import * as _ from 'lodash';
-import { Dictionary } from '@types/lodash'
+import { map, pick, pickBy, startCase } from 'lodash';
+import Building from './data/building';
 
-interface Building {
-  name: string
-  cost: number
-  lots: number
-  economy: number
-  stability: number
-  loyalty: number
+const sign = number => {
+  return number >= 0 ? '+' : '-';
+}
+
+const pickBonuses = (building: Building, bonuses: string[]): string[] => {
+  const data: {} = pickBy(
+    pick(building, bonuses),
+    value => value !== 0
+  )
+  return map(data, (value: number, name: string) => `${sign(value)}${Math.abs(value)} ${startCase(name)}`);
 }
 
 export const formatBuilding = function(building: Building): string {
-  const bonuses: {} = _.pickBy(
-    {economy: building.economy, loyalty: building.loyalty, stability: building.stability},
-    value => value > 0
-  )
-  const bonusDescription: string[] = _.map(bonuses, (value: number, name: string) => `+${value} ${name}`)
-  return `${building.name}: Costs ${building.cost} BP (${building.lots} Lots)\n\t${bonusDescription.join(", ")}`
+  const keyBonuses: string[] = pickBonuses(building, ['economy', 'stability', 'loyalty', 'unrest']);
+  const minorBonuses: string[] = pickBonuses(building, ['defense', 'baseValue']);
+  return `${building.name}: ${building.cost} BP (${building.lots} Lots)
+\t${keyBonuses.join(", ")}
+\t${minorBonuses.join(", ")}`
 }

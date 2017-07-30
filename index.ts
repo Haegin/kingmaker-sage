@@ -44,7 +44,7 @@ buildingsCommand.run = async (message: CommandMessage, args: string): Promise<an
   kingmakerData.findBuildings(args)
     .then(buildings => buildings.map(building => building.name))
     .then(found => message.channel.send(`Found ${found.length} buildings: ${found.join(', ')}`))
-    .catch(console.log)
+    .catch(console.log);
 }
 bot.registry.registerCommand(buildingsCommand)
 
@@ -56,8 +56,13 @@ let buildingInfoCommand = new Command(bot, {
 });
 buildingInfoCommand.run = async (message: CommandMessage, args: string): Promise<any> => {
   kingmakerData.buildingInfo(args)
-    .then(building => message.channel.send(formatBuilding(building)))
-    .catch(console.log)
+    .then(building => {
+      if (building) {
+        message.channel.send(formatBuilding(building));
+      } else {
+        message.channel.send(`Sorry, I couldn't find a building called "${args}".`);
+      }
+    }).catch(console.log)
 }
 bot.registry.registerCommand(buildingInfoCommand)
 

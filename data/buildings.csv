@@ -1,0 +1,71 @@
+Improvements,Cost,Lots,Economy,Loyalty,Stability,Defense,Unrest,Base Value,Discount,Magic Item,Upgrade From,Upgrade To,Corruption,Crime,Law,Lore,Society,Productivity,Fame,,
+Academy,52,2,2,2,,,,,"Caster's Tower, Library, Magic Shop","3 minor scrolls or wondrous items, 2 medium scrolls or wondrous items",Library,University,,,,2,2,1,,,
+Alchemist (1H),18,1,1,,,,,1000,,1 minor potion or wondrous item,,,,,,,,,,0.06,100.00%
+Arena (Per S),40,4,,,4,,,,"Brothel, Garrison, Inn, Stable, Theatre",,Theater,,,1,,,,,1,0.00,100.00%
+Bank,28,1,4,,,,,2000,,,,,,,,,,,,0.14,400.00%
+Bardic College,40,2,1,3,1,,,,"Library, Museum, Theater",2 minor scrolls or wondrous items,,,,,,,,,1,0.03,250.00%
+Barracks,6,1,,,,2,-1,,,,Garrison,,,,,,,,,0.00,200.00%
+Black Market (2H),50,1,2,,1,,1,2000,Brothel,"2 minor items, 1 medium item, 1 major item",,,2,2,,,,,,0.04,300.00%
+Brewery,6,1,,1,1,,,,,,,,,,,,,,,0.00,200.00%
+Bridge,6,1,1,,,,,,,,,,,,,,,,,0.17,100.00%
+Bureau,10,2,1,-1,1,,,,,,,,1,,1,,,,,0.10,50.00%
+Caster's Tower,30,1,1,1,,,,,,"3 minor items, 2 medium items",,,,,,,,,,0.03,200.00%
+Castle (Per S),54,4,2,2,2,8,-4,,"Noble Villa, Town Hall",,,,,,,,,,1,0.04,350.00%
+Cathedral (Per S),58,4,,4,4,,-4,,"Academy, Temple","3 minor potions or wondrous items, 2 medium potions or wondrous items",,,,,2,,,,1,0.00,200.00%
+Cistern (X),6,0,,,1,,,,,,,,,,,,,,,0.00,#DIV/0!
+City Wall (L),2,0,,,,1,-2,,,,,,,,,,,,,0.00,#DIV/0!
+Dance Hall (1H),4,1,1,2,,,1,,,,,,1,1,,,,,,0.25,300.00%
+"Dump (No H, M, NV)",4,1,,,1,,,,,,,,,,,,,,,0.00,100.00%
+Everflowing Spring (X),5,0,,,,,,,,,,,,,,,,,,0.00,#DIV/0!
+Exotic Artisan (1H),10,1,1,,1,,,,,"1 minor ring, wand, or wondrous item",,,,,,,,,,0.10,200.00%
+Foreign Quarter,30,4,3,,-1,,,,,,,,,1,,1,2,,,0.10,50.00%
+Foundry (W),16,2,1,,1,,1,,Smithy,,,,,,,,,1,,0.06,100.00%
+Garrison,28,2,,2,2,,-2,,"City Wall, Granary, Jail",,Barracks,,,,,,,,,0.00,200.00%
+Granary,12,1,,1,1,,,,,,,,,,,,,,,0.00,200.00%
+Graveyard,4,1,,1,,,,,,,,,,,,,,,,0.00,100.00%
+Guildhall,34,2,2,2,,,,1000,"Pier, Stable, Trade Shop",,Trade Shop,,,,1,,,2,,0.06,200.00%
+Herbalist (1H),10,1,,1,1,,,,,1 minor potion or wondrous item,,,,,,,,,,0.00,200.00%
+Hospital,30,2,,1,2,,,,,,,,,,,1,,2,,0.00,150.00%
+House,3,1,,,,,-1,,,,Tenement,,,,,,,,,0.00,0.00%
+Inn (1H),10,1,1,1,,,,500,,,,,,,,1,1,,,0.10,200.00%
+Jail,14,1,,2,2,,-2,,,,,,,-1,1,,,,,0.00,400.00%
+Library,6,1,1,1,,,,,,,,Academy,,,,1,,,,0.17,200.00%
+Luxury Store (1H),28,1,1,,,,,2000,,"2 minor rings, wands, or wondrous items",Shop,Magic Shop,,,,1,,,,0.04,100.00%
+Magic Shop (2H),68,1,1,,,,,2000,,"4 minor wondrous items, 2 medium wondrous items, 1 major wondrous item",Luxury Store,,,,,,,,,0.01,100.00%
+Magical Academy,58,2,2,,,,,,"Caster's Tower, Library, Magic Shop","3 minor potions, scrolls, or wondrous items; 1 medium potion, scroll, or wondrous item",,,,,,2,1,,1,0.03,100.00%
+Magical Streetlamps (X),5,0,,,,,,,,,,,,-1,,,,,,0.00,#DIV/0!
+Mansion,10,1,,,1,,,,,,,Noble Villa,,,1,,1,,,0.00,100.00%
+Market (2H),48,2,2,,2,,,2000,"Black Market, Inn, Shop",2 minor wondrous items,Shop,,,,,,,,,0.04,200.00%
+Menagerie,16,4,1,0,,,,,,,,,,,,,,,1,0.06,25.00%
+Military Academy (Per S),36,2,,2,1,,,,Barracks,"1 minor armor, shield, or weapon; 1 medium armor, shield, or weapon",,,,,1,1,,,1,0.00,150.00%
+Mill (W),6,1,1,,1,,,,,,,,,,,,,1,,0.17,200.00%
+Mint,30,1,3,3,1,,,,,,,,,,,,,,1,0.10,700.00%
+Moat (L),2,0,,,,1,-1,,,,,,,,,,,,,0.00,#DIV/0!
+Monastery,16,2,,,1,,,,,,,,,,1,1,,,,0.00,50.00%
+Monument,6,1,,1,,,-1,,,,,,,,,,,,,0.00,100.00%
+Museum,30,2,1,1,,,,,,,,,,,,2,1,,1,0.03,100.00%
+Noble Villa,24,2,1,1,1,,,,"Exotic Artisan, Luxury Store, Mansion",,Mansion,,,,,,1,,1,0.04,150.00%
+Observatory,12,1,,,1,,,,,1 minor scroll or wondrous item,,,,,,1,,,,0.00,100.00%
+Orphanage,6,1,,,1,,-1,,,,,,,,,,,,,0.00,100.00%
+Palace,108,4,2,6,2,,,1000,"Mansion, Mint, Noble Villa",,,,,,2,,,,1,0.02,250.00%
+Park,4,1,,1,,,-1,,,,,,,,,,,,,0.00,100.00%
+Paved Streets (Per D),24,0,2,,1,,,,,,,,,,,,,2,,0.08,#DIV/0!
+Pier (W),16,1,1,,1,,,1000,,,,Waterfront,,1,,,,,,0.06,200.00%
+Sewer System (Per D),24,0,,1,2,,,,"Cistern, Dump",,,,,1,,,,1,,0.00,#DIV/0!
+"Shop (1H, M)",8,1,1,,,,,500,,,,"Luxury Store, Market",,,,,,1,,0.13,100.00%
+Shrine,8,1,,1,,,-1,,,"1 minor potion, scroll, or wondrous item",,Temple,,,,,,,,0.00,100.00%
+Smithy,6,1,1,,1,,,,,,,,,,,,,,,0.17,200.00%
+"Stable (1H, M, NV)",10,1,1,1,,,,500,,,,,,,,,,,,0.10,200.00%
+Stockyard,20,4,1,,-1,,,,"Stable, Tannery",,,,,,,,,1,,0.05,0.00%
+"Tannery (No H,M,NV,T)",6,1,1,,1,,,,,,,,,,,,-1,,,0.17,200.00%
+Tavern (1H or M),12,1,1,1,,,,500,,,,,1,,,,,,,0.08,200.00%
+Temple,32,2,,2,2,,-2,,"Graveyard, Monument, Shrine",2 minor items,Shrine,,,,,,,,,0.00,200.00%
+Tenement,1,1,,,,,2,,,,,House,,,,,,,,0.00,0.00%
+Theater,24,2,2,,2,,,,"Brothel, Exotic Artisan, Inn, Park, Tavern",,,Arena,,,,,,,,0.08,200.00%
+Town Hall,22,2,1,1,1,,,,"Barracks, Cistern, Dump, Jail, Watchtower",,,,,,1,,,,,0.05,150.00%
+Trade Shop (1H),10,1,1,,1,,,500,,,,Guildhall,,,,,,1,,0.10,200.00%
+University,78,4,3,3,,,,,"Academy, Bardic College, Library, Magical Academy, Military Academy, Museum","4 minor scrolls or wondrous items, 2 medium scrolls or wondrous items ",,,,,,,,,1,0.04,150.00%
+Watchtower,12,1,,,1,2,-1,,,,,,,,,,,,,0.00,300.00%
+Watergate,2,0,,,,,,,,,,,,,,,,,,0.00,#DIV/0!
+Waterfront (W) (Per S),90,4,4,,,,,4000,"Black Market, Guildhall, Market, Pire","2 minor wondrous items, 1 medium wondrous item, 1 major wondrous item",Pier,,,,,,,2,,0.04,100.00%
+Waterway,3,1,,,,,,,,,,,,,,,,,,0.00,0.00%
